@@ -41,7 +41,7 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Build changed projects
-        run: pnpm run build 
+        run: pnpm run build
 
       - name: Prepare public folder
         run: |
@@ -49,6 +49,8 @@ jobs:
           for dir in projects/*; do
             if [ -d "$dir/dist" ]; then
               cp -r $dir/dist public/$(basename $dir)
+            elif [ -d "$dir/out" ]; then
+              cp -r $dir/out public/$(basename $dir)
             fi
           done
 
