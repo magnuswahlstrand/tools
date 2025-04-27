@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "build": "NEXT_PUBLIC_BASE_PATH=/tools turbo run build",
+    "build": "turbo run build",
     "generate-index": "node scripts/generate-index.js",
     "prepare-gh-pages": "rm -rf gh-pages-public && mkdir gh-pages-public && for dir in projects/*; do if [ -d \"$dir/dist\" ]; then cp -r $dir/dist gh-pages-public/$(basename $dir); elif [ -d \"$dir/out\" ]; then cp -r $dir/out gh-pages-public/$(basename $dir); fi; done && node scripts/generate-index.js"
   },
