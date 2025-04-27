@@ -41,18 +41,15 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Build changed projects
+        env:
+          NEXT_PUBLIC_BASE_PATH: /tools
         run: pnpm run build
 
       - name: Prepare public folder
-        run: |
-          mkdir public
-          for dir in projects/*; do
-            if [ -d "$dir/dist" ]; then
-              cp -r $dir/dist public/$(basename $dir)
-            elif [ -d "$dir/out" ]; then
-              cp -r $dir/out public/$(basename $dir)
-            fi
-          done
+        run: pnpm run prepare-public
+
+      - name: Generate index page
+        run: pnpm run generate-index
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

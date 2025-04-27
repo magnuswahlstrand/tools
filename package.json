@@ -4,7 +4,9 @@
   "scripts": {
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "build": "turbo run build"
+    "build": "NEXT_PUBLIC_BASE_PATH=/tools turbo run build",
+    "generate-index": "node scripts/generate-index.js",
+    "prepare-public": "rm -rf public && mkdir public && for dir in projects/*; do if [ -d \"$dir/dist\" ]; then cp -r $dir/dist public/$(basename $dir); elif [ -d \"$dir/out\" ]; then cp -r $dir/out public/$(basename $dir); fi; done && pnpm run generate-index"
   },
   "devDependencies": {
     "turbo": "^2.5.2"
