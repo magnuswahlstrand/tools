@@ -46,6 +46,11 @@ jobs:
       - name: Prepare GitHub Pages
         run: pnpm run prepare-gh-pages
 
+      - name: List files to be deployed
+        run: |
+          sudo apt-get install -y tree
+          tree gh-pages-public
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
