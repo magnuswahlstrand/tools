@@ -8,7 +8,7 @@ import { useSearchParams } from 'next/navigation';
 const Confetti = dynamic(() => import('react-confetti'), { ssr: false });
 
 const defaultWords = ['oskar', 'mamma', 'pappa'];
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
 const incorrectSound = new Howl({ src: [`${basePath}/sounds/incorrect.aiff`] });
 const correctSound = new Howl({ src: [`${basePath}/sounds/correct.mp3`] });
 // const completeSound = new Howl({ src: [`${basePath}/sounds/applause.wav`] });

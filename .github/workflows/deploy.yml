@@ -43,16 +43,13 @@ jobs:
       - name: Build changed projects
         run: pnpm run build
 
-      - name: Prepare public folder
-        run: pnpm run prepare-public
-
-      - name: Generate index page
-        run: pnpm run generate-index
+      - name: Prepare GitHub Pages
+        run: pnpm run prepare-gh-pages
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./public
+          path: ./gh-pages-public
 
   deploy:
     environment:
