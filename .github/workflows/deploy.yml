@@ -41,8 +41,6 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Build changed projects
-        env:
-          NEXT_PUBLIC_BASE_PATH: /tools
         run: pnpm run build
 
       - name: Prepare public folder
