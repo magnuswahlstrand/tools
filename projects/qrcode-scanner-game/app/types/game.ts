@@ -30,6 +30,11 @@ export const GAME_ITEMS: Record<string, GameItem> = {
     title: 'Cat',
     imageUrl: '/images/cat.png'
   },
+  'grouse': {
+    id: 'grouse',
+    title: 'Grouse',
+    imageUrl: '/images/grouse.png'
+  },
   'hedgehog': {
     id: 'hedgehog',
     title: 'Hedgehog',
@@ -52,6 +57,7 @@ export const CORRECT_ORDER = [
   'giraffe',
   'horse',
   'dog',
+  'grouse',
   'cat',
   'hedgehog',
   'mouse',
@@ -64,6 +70,7 @@ export const QR_CODE_MAPPINGS: Record<string, string> = {
   'horse': 'horse',
   'dog': 'dog',
   'cat': 'cat',
+  'grouse': 'grouse',
   'hedgehog': 'hedgehog',
   'mouse': 'mouse',
   'ant': 'ant'
