@@ -1,8 +1,0 @@
-{
-  "name": "static",
-  "private": true,
-  "version": "0.1.0",
-  "scripts": {
-    "build": "mkdir -p dist && cp index.html dist/"
-  }
-} 

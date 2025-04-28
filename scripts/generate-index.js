@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const yaml = require('yaml');
 
 // Get git info for a project
 function getGitInfo(projectPath) {
@@ -13,17 +14,35 @@ function getGitInfo(projectPath) {
     }
 }
 
+// Parse frontmatter from README.md
+function getProjectMetadata(projectPath) {
+    try {
+        const readmePath = path.join(__dirname, '..', 'projects', projectPath, 'README.md');
+        const content = fs.readFileSync(readmePath, 'utf8');
+        const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+        
+        if (frontmatterMatch) {
+            return yaml.parse(frontmatterMatch[1]);
+        }
+        return {};
+    } catch (e) {
+        return {};
+    }
+}
+
 // Get all directories in the public folder
 const publicDir = path.join(__dirname, '..', 'gh-pages-public');
 const projects = fs.readdirSync(publicDir)
     .filter(f => fs.statSync(path.join(publicDir, f)).isDirectory());
 
-// Get git info for each project
+// Get git info and metadata for each project
 const projectsInfo = projects.map(project => {
     const gitInfo = getGitInfo(`projects/${project}`);
+    const metadata = getProjectMetadata(project);
     return {
         name: project,
-        ...gitInfo
+        ...gitInfo,
+        ...metadata
     };
 });
 
@@ -41,18 +60,19 @@ const html = `<!DOCTYPE html>
             margin: 0 auto;
             padding: 2rem;
             line-height: 1.6;
+            background: #f8fafc;
         }
         h1 { color: #2d3748; }
         .projects {
             display: grid;
-            gap: 1rem;
+            gap: 1.5rem;
             margin-top: 2rem;
         }
         .project-link {
             display: block;
             padding: 1.5rem;
-            background: #f7fafc;
-            border-radius: 0.5rem;
+            background: white;
+            border-radius: 0.75rem;
             color: #4a5568;
             text-decoration: none;
             border: 1px solid #e2e8f0;
@@ -63,13 +83,49 @@ const html = `<!DOCTYPE html>
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         .project-title {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
+            color: #1a202c;
+        }
+        .project-description {
+            color: #4a5568;
+            margin-bottom: 1rem;
         }
         .project-meta {
             font-size: 0.875rem;
             color: #718096;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .tag {
+            background: #edf2f7;
+            color: #4a5568;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .notes {
+            margin-top: 0.75rem;
+        }
+        .note {
+            display: inline-block;
+            background: #fff5f5;
+            color: #c53030;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-right: 0.5rem;
+            border: 1px solid #feb2b2;
         }
     </style>
 </head>
@@ -78,7 +134,16 @@ const html = `<!DOCTYPE html>
     <div class="projects">
         ${projectsInfo.map(project => `
         <a href="./${project.name}" class="project-link">
-            <div class="project-title">${project.name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+            <div class="project-title">${project.title || project.name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+            ${project.description ? `<div class="project-description">${project.description}</div>` : ''}
+            ${project.tags ? `
+            <div class="tags">
+                ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+            </div>` : ''}
+            ${project.notes ? `
+            <div class="notes">
+                ${project.notes.map(note => `<span class="note">${note}</span>`).join('')}
+            </div>` : ''}
             <div class="project-meta">
                 Version: ${project.commitCount} commits<br>
                 Last update: ${project.lastUpdate}
