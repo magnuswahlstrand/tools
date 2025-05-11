@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "ChatGPT Conversation Saver",
+  "version": "1.1",
+  "description": "Save ChatGPT conversations to disk with a keyboard shortcut",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://chat.openai.com/*",
+    "https://chatgpt.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chat.openai.com/*",
+        "https://chatgpt.com/*"
+      ],
+      "js": ["content.js"]
+    }
+  ],
+  "commands": {
+    "save-conversation": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Save current conversation"
+    }
+  }
+} 

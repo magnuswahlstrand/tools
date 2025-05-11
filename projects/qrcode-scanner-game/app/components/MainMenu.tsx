@@ -39,7 +39,7 @@ export default function MainMenu() {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [selectedIndex]);
+  }, [selectedIndex, handleSelect]);
 
   return (
     <Card className="w-full max-w-md">

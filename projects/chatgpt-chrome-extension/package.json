@@ -1,0 +1,11 @@
+{
+  "name": "chatgpt-chrome-extension",
+  "version": "1.0.0",
+  "description": "A Chrome extension to save ChatGPT conversations as text files.",
+  "scripts": {
+    "build": "mkdir -p out && github-markdown README.md > out/index.html"
+  },
+  "devDependencies": {
+    "markdown-to-html": "^0.0.13"
+  }
+} 
