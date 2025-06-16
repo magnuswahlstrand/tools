@@ -29,3 +29,6 @@ gh-pages-public
 **/.turbo
 **/.turbo/**
 *.turbo
+
+# Added
+drafts
