@@ -50,6 +50,11 @@
         .input-group select {
             width: 120px;
         }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -64,6 +69,10 @@
                 <option value="60">±60 minutes</option>
             </select>
         </div>
+        <div class="checkbox-group">
+            <input type="checkbox" id="useUTC">
+            <label for="useUTC">Use UTC timezone</label>
+        </div>
         <div id="output"></div>
         <button class="copy-btn" onclick="copyToClipboard()">Copy to Clipboard</button>
     </div>
@@ -71,6 +80,7 @@
     <script>
         const timestampInput = document.getElementById('timestamp');
         const rangeSelect = document.getElementById('range');
+        const useUTC = document.getElementById('useUTC');
         const output = document.getElementById('output');
 
         function parseDate(input) {
@@ -82,7 +92,19 @@
         }
 
         function formatDate(date) {
-            return date.toISOString().slice(0, 19).replace('T', ' ');
+            if (useUTC.checked) {
+                return date.toISOString().slice(0, 19).replace('T', ' ');
+            }
+            
+            const pad = (n) => n.toString().padStart(2, '0');
+            const year = date.getFullYear();
+            const month = pad(date.getMonth() + 1);
+            const day = pad(date.getDate());
+            const hours = pad(date.getHours());
+            const minutes = pad(date.getMinutes());
+            const seconds = pad(date.getSeconds());
+            
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
 
         function updateOutput() {
@@ -110,6 +132,7 @@
 
         timestampInput.addEventListener('input', updateOutput);
         rangeSelect.addEventListener('change', updateOutput);
+        useUTC.addEventListener('change', updateOutput);
     </script>
 </body>
 </html> 
