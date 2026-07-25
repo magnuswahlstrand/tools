@@ -7,10 +7,11 @@ const yaml = require('yaml');
 function getGitInfo(projectPath) {
     try {
         const commitCount = execSync(`git rev-list --count HEAD -- ${projectPath}`, { encoding: 'utf8' }).trim();
+        const lastUpdateRaw = execSync(`git log -1 --format=%at -- ${projectPath}`, { encoding: 'utf8' }).trim();
         const lastUpdate = execSync(`git log -1 --format=%cd --date=format:'%B %d, %Y' -- ${projectPath}`, { encoding: 'utf8' }).trim();
-        return { commitCount, lastUpdate };
+        return { commitCount, lastUpdate, lastUpdateRaw: parseInt(lastUpdateRaw, 10) || 0 };
     } catch (e) {
-        return { commitCount: '0', lastUpdate: 'N/A' };
+        return { commitCount: '0', lastUpdate: 'N/A', lastUpdateRaw: 0 };
     }
 }
 
@@ -45,6 +46,9 @@ const projectsInfo = projects.map(project => {
         ...metadata
     };
 });
+
+// Sort by last update, most recent first
+projectsInfo.sort((a, b) => b.lastUpdateRaw - a.lastUpdateRaw);
 
 // Generate HTML content
 const html = `<!DOCTYPE html>
