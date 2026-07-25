@@ -1,4 +1,5 @@
 import { Grid } from './grid';
+import { getCornerCell, getCornerWall, CORNERS, type Corner } from './corner';
 
 function createRng(seed?: number): () => number {
   if (seed === undefined) return Math.random;
@@ -18,7 +19,11 @@ function shuffle<T>(arr: T[], rng: () => number): T[] {
   return copy;
 }
 
-export function generateMaze(rows: number, cols: number, seed?: number): Grid {
+export function generateMaze(
+  rows: number,
+  cols: number,
+  seed?: number,
+): { grid: Grid; startCorner: Corner; finishCorner: Corner } {
   const grid = new Grid(rows, cols);
   const rng = createRng(seed);
 
@@ -36,12 +41,19 @@ export function generateMaze(rows: number, cols: number, seed?: number): Grid {
 
   carve(0, 0);
 
-  grid.cells[0][0].walls.top = false;
-  grid.cells[rows - 1][cols - 1].walls.bottom = false;
+  const shuffled = shuffle([...CORNERS], rng);
+  const sc = shuffled[0];
+  const fc = shuffled[1];
+
+  const startCell = getCornerCell(rows, cols, sc);
+  const finishCell = getCornerCell(rows, cols, fc);
+
+  grid.cells[startCell.row][startCell.col].walls[getCornerWall(sc)] = false;
+  grid.cells[finishCell.row][finishCell.col].walls[getCornerWall(fc)] = false;
 
   for (const cell of grid.getAllCells()) {
     cell.visited = false;
   }
 
-  return grid;
+  return { grid, startCorner: sc, finishCorner: fc };
 }

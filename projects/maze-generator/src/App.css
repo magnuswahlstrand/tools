@@ -43,6 +43,21 @@
   font-family: inherit;
 }
 
+.config-panel select {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: white;
+}
+
+.config-panel select:focus {
+  outline: none;
+  border-color: #4a90d9;
+  box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.15);
+}
+
 .config-panel input[type="text"]:focus,
 .config-panel input[type="number"]:focus {
   outline: none;

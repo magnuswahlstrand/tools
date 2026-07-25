@@ -2,12 +2,15 @@ import { useRef, useCallback, type JSX } from 'react';
 import type { Cell } from '../maze/grid';
 import type { Grid } from '../maze/grid';
 import type { LetterPlacement } from '../maze/letters';
+import type { Corner } from '../maze/corner';
 
 interface MazeItem {
   word: string;
   grid: Grid;
   solutionPath: Cell[];
   letterPlacements: LetterPlacement[];
+  startCorner: Corner;
+  finishCorner: Corner;
 }
 
 interface MazePreviewProps {
@@ -22,11 +25,48 @@ interface MazePreviewProps {
 const MARGIN_X = 22;
 const MARGIN_TOP = 18;
 const MARGIN_BOTTOM = 18;
-const GAP = 10;
+const GAP = 16;
 const DRAWING_H = 40;
 const WALL_THICKNESS = 1;
 const FONT_SIZE = 5;
 const MAZES_PER_PAGE = 2;
+
+function getMarkerPos(
+  mazeX: number, mazeY: number, cellSize: number,
+  cols: number, rows: number, corner: Corner,
+): { x: number; y: number } {
+  switch (corner) {
+    case 'top-left': return { x: mazeX + 0.5 * cellSize, y: mazeY };
+    case 'top-right': return { x: mazeX + (cols - 0.5) * cellSize, y: mazeY };
+    case 'bottom-left': return { x: mazeX, y: mazeY + (rows - 0.5) * cellSize };
+    case 'bottom-right': return { x: mazeX + (cols - 0.5) * cellSize, y: mazeY + rows * cellSize };
+  }
+}
+
+function startArrowPath(corner: Corner, x: number, y: number, s: number): string {
+  const h = s * 0.7;
+  switch (corner) {
+    case 'top-left':
+    case 'top-right':
+      return `M ${x - h} ${y - s} L ${x + h} ${y - s} L ${x} ${y} Z`;
+    case 'bottom-left':
+      return `M ${x - s} ${y - h} L ${x - s} ${y + h} L ${x} ${y} Z`;
+    case 'bottom-right':
+      return `M ${x - h} ${y + s} L ${x + h} ${y + s} L ${x} ${y} Z`;
+  }
+}
+
+function finishMarker(corner: Corner, x: number, y: number, r: number) {
+  switch (corner) {
+    case 'top-left':
+    case 'top-right':
+      return { cx: x, cy: y - r - 1, outer: r, inner: r * 0.35 };
+    case 'bottom-left':
+      return { cx: x - r - 1, cy: y, outer: r, inner: r * 0.35 };
+    case 'bottom-right':
+      return { cx: x, cy: y + r + 1, outer: r, inner: r * 0.35 };
+  }
+}
 
 function renderMazeContent(
   grid: Grid,
@@ -137,7 +177,7 @@ function renderPageSVG(
     ? pageH - MARGIN_TOP - MARGIN_BOTTOM
     : (pageH - MARGIN_TOP - MARGIN_BOTTOM - GAP) / MAZES_PER_PAGE;
 
-  const mazeAreaW = landscape && drawingArea ? slotW : slotW;
+  const mazeAreaW = slotW;
   const mazeAreaH = drawingArea ? slotH - DRAWING_H : slotH;
 
   return (
@@ -165,19 +205,19 @@ function renderPageSVG(
           mazeY = MARGIN_TOP + i * (slotH + GAP) + (slotH - mazeH) / 2;
         }
 
-        const startX = mazeX + cellSize / 2;
-        const startY = mazeY;
-        const finishX = mazeX + (m.grid.cols - 0.5) * cellSize;
-        const finishY = mazeY + m.grid.rows * cellSize;
+        const sp = getMarkerPos(mazeX, mazeY, cellSize, m.grid.cols, m.grid.rows, m.startCorner);
+        const fp = getMarkerPos(mazeX, mazeY, cellSize, m.grid.cols, m.grid.rows, m.finishCorner);
+        const fm = finishMarker(m.finishCorner, fp.x, fp.y, 3);
 
         return (
           <g key={i}>
             <path
-              d={`M ${startX - 3} ${startY - 4} L ${startX + 3} ${startY - 4} L ${startX} ${startY + 1.5} Z`}
+              d={startArrowPath(m.startCorner, sp.x, sp.y, 4)}
               fill="#555"
             />
-            <circle cx={finishX} cy={finishY + 4} r={3} fill="none" stroke="#555" strokeWidth={1.3} />
-            <circle cx={finishX} cy={finishY + 4} r={1} fill="#555" />
+
+            <circle cx={fm.cx} cy={fm.cy} r={fm.outer} fill="none" stroke="#555" strokeWidth={1.3} />
+            <circle cx={fm.cx} cy={fm.cy} r={fm.inner} fill="#555" />
 
             {renderMazeContent(m.grid, m.letterPlacements, mazeX, mazeY, cellSize)}
 

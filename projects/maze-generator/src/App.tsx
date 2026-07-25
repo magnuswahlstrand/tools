@@ -2,6 +2,8 @@ import { useState, useCallback, useEffect } from 'react';
 import { generateMaze } from './maze/generator';
 import { solveMaze } from './maze/solver';
 import { placeLetters } from './maze/letters';
+import { getCornerCell } from './maze/corner';
+import type { Corner } from './maze/corner';
 import type { Cell } from './maze/grid';
 import type { Grid } from './maze/grid';
 import type { LetterPlacement } from './maze/letters';
@@ -14,6 +16,8 @@ interface MazeData {
   grid: Grid;
   solutionPath: Cell[];
   letterPlacements: LetterPlacement[];
+  startCorner: Corner;
+  finishCorner: Corner;
 }
 
 const STORAGE_KEY = 'maze-generator-config';
@@ -58,13 +62,21 @@ function App() {
     const mazes: MazeData[] = [];
 
     for (const word of words) {
-      const grid = generateMaze(configValues.rows, configValues.cols);
-      const solutionPath = solveMaze(grid);
+      const { grid, startCorner, finishCorner } = generateMaze(
+        configValues.rows, configValues.cols,
+      );
+
+      const entrance = getCornerCell(configValues.rows, configValues.cols, startCorner);
+      const exit = getCornerCell(configValues.rows, configValues.cols, finishCorner);
+      const solutionPath = solveMaze(grid, entrance.row, entrance.col, exit.row, exit.col);
       const letterPlacements = placeLetters(
         grid, solutionPath, word, configValues.decoyLetters, configValues.decoyChars,
       );
 
-      mazes.push({ word, grid, solutionPath, letterPlacements });
+      mazes.push({
+        word, grid, solutionPath, letterPlacements,
+        startCorner, finishCorner,
+      });
     }
 
     setMazeData(mazes);

@@ -25,9 +25,15 @@ function getAccessibleNeighbors(grid: Grid, cell: Cell): Cell[] {
   return neighbors;
 }
 
-export function solveMaze(grid: Grid): Cell[] {
-  const start = grid.getCell(0, 0)!;
-  const end = grid.getCell(grid.rows - 1, grid.cols - 1)!;
+export function solveMaze(
+  grid: Grid,
+  entranceRow: number,
+  entranceCol: number,
+  exitRow: number,
+  exitCol: number,
+): Cell[] {
+  const start = grid.getCell(entranceRow, entranceCol)!;
+  const end = grid.getCell(exitRow, exitCol)!;
 
   const visited = new Set<string>();
   const path: Cell[] = [];
