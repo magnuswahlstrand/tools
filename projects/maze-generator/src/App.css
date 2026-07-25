@@ -74,27 +74,23 @@
   flex: 1;
 }
 
-.config-checkboxes {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.config-checkboxes label {
-  flex-direction: row;
+.checkbox-row {
+  flex-direction: row !important;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 0;
+  gap: 8px;
+  margin-bottom: 8px !important;
 }
 
-.config-checkboxes input[type="checkbox"] {
+.checkbox-row input[type="checkbox"] {
   width: 16px;
   height: 16px;
   accent-color: #4a90d9;
+  flex-shrink: 0;
 }
 
 .decoy-chars-label {
-  margin-top: -8px;
+  margin-top: -4px;
+  margin-bottom: 8px !important;
 }
 
 .generate-btn {

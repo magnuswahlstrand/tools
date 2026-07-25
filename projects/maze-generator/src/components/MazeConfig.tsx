@@ -4,7 +4,8 @@ export interface ConfigValues {
   word: string;
   rows: number;
   cols: number;
-  decoyLetters: boolean;
+  showLetters: boolean;
+  showDecoys: boolean;
   decoyChars: string;
   drawingArea: boolean;
   landscape: boolean;
@@ -13,10 +14,9 @@ export interface ConfigValues {
 interface MazeConfigProps {
   values: ConfigValues;
   onChange: (values: ConfigValues) => void;
-  onGenerate: () => void;
 }
 
-export function MazeConfig({ values, onChange, onGenerate }: MazeConfigProps) {
+export function MazeConfig({ values, onChange }: MazeConfigProps) {
   const update = <K extends keyof ConfigValues>(key: K, value: ConfigValues[K]) => {
     onChange({ ...values, [key]: value });
   };
@@ -58,34 +58,23 @@ export function MazeConfig({ values, onChange, onGenerate }: MazeConfigProps) {
         </label>
       </div>
 
-      <div className="config-checkboxes">
-        <label>
-          <input
-            type="checkbox"
-            checked={values.decoyLetters}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => update('decoyLetters', e.target.checked)}
-          />
-          Decoy letters
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={values.drawingArea}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => update('drawingArea', e.target.checked)}
-          />
-          Drawing area
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={values.landscape}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => update('landscape', e.target.checked)}
-          />
-          Landscape
-        </label>
-      </div>
-
-      {values.decoyLetters && (
+      <label className="checkbox-row">
+        <input
+          type="checkbox"
+          checked={values.showLetters}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => update('showLetters', e.target.checked)}
+        />
+        Show letters
+      </label>
+      <label className="checkbox-row">
+        <input
+          type="checkbox"
+          checked={values.showDecoys}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => update('showDecoys', e.target.checked)}
+        />
+        Show decoy letters
+      </label>
+      {values.showDecoys && (
         <label className="decoy-chars-label">
           Allowed decoy characters
           <input
@@ -96,10 +85,23 @@ export function MazeConfig({ values, onChange, onGenerate }: MazeConfigProps) {
           />
         </label>
       )}
+      <label className="checkbox-row">
+        <input
+          type="checkbox"
+          checked={values.drawingArea}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => update('drawingArea', e.target.checked)}
+        />
+        Drawing area
+      </label>
+      <label className="checkbox-row">
+        <input
+          type="checkbox"
+          checked={values.landscape}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => update('landscape', e.target.checked)}
+        />
+        Landscape
+      </label>
 
-      <button className="generate-btn" onClick={onGenerate}>
-        Generate
-      </button>
     </div>
   );
 }

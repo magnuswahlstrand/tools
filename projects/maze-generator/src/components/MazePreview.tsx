@@ -16,7 +16,6 @@ interface MazeItem {
 interface MazePreviewProps {
   mazes: MazeItem[];
   config: {
-    decoyLetters: boolean;
     drawingArea: boolean;
     landscape: boolean;
   };

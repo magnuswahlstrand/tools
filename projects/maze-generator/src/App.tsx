@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { generateMaze } from './maze/generator';
 import { solveMaze } from './maze/solver';
 import { placeLetters } from './maze/letters';
@@ -26,9 +26,10 @@ const DEFAULT_CONFIG: ConfigValues = {
   word: 'cat, dog',
   rows: 8,
   cols: 8,
-  decoyLetters: true,
+  showLetters: true,
+  showDecoys: true,
   decoyChars: '',
-  drawingArea: true,
+  drawingArea: false,
   landscape: false,
 };
 
@@ -50,12 +51,12 @@ function App() {
   const [mazeData, setMazeData] = useState<MazeData[]>([]);
   const [error, setError] = useState('');
 
-  const handleGenerate = useCallback(() => {
+  useEffect(() => {
     setError('');
 
     const words = configValues.word.split(',').map((w) => w.trim()).filter(Boolean);
     if (words.length === 0) {
-      setError('Please enter at least one word.');
+      setMazeData([]);
       return;
     }
 
@@ -69,9 +70,9 @@ function App() {
       const entrance = getCornerCell(configValues.rows, configValues.cols, startCorner);
       const exit = getCornerCell(configValues.rows, configValues.cols, finishCorner);
       const solutionPath = solveMaze(grid, entrance.row, entrance.col, exit.row, exit.col);
-      const letterPlacements = placeLetters(
-        grid, solutionPath, word, configValues.decoyLetters, configValues.decoyChars,
-      );
+      const letterPlacements = configValues.showLetters
+        ? placeLetters(grid, solutionPath, word, configValues.showDecoys, configValues.decoyChars)
+        : [];
 
       mazes.push({
         word, grid, solutionPath, letterPlacements,
@@ -84,13 +85,12 @@ function App() {
 
   return (
     <div className="app">
-      <MazeConfig values={configValues} onChange={setConfigValues} onGenerate={handleGenerate} />
+      <MazeConfig values={configValues} onChange={setConfigValues} />
       <div className="preview-panel">
         {error && <div className="error-banner">{error}</div>}
         <MazePreview
           mazes={mazeData}
           config={{
-            decoyLetters: configValues.decoyLetters,
             drawingArea: configValues.drawingArea,
             landscape: configValues.landscape,
           }}
