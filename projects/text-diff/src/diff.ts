@@ -65,16 +65,22 @@ export function diffWords(oldText: string, newText: string): DiffPart[] {
 }
 
 // Split text into sentence ranges. A sentence ends at a period, exclamation
-// or question mark followed by whitespace, or at a line break.
+// or question mark followed by whitespace, or at a line break. Trailing
+// whitespace stays with the sentence so newlines are not orphaned.
 function sentenceRanges(text: string): Array<[number, number]> {
   const ranges: Array<[number, number]> = []
   let start = 0
-  for (let i = 0; i < text.length - 1; i++) {
+  for (let i = 0; i < text.length; i++) {
     const ch = text[i]
-    const next = text[i + 1]
-    if (ch === '\n' || (ch === '.' || ch === '!' || ch === '?') && /\s/.test(next)) {
+    if (ch === '\n') {
       ranges.push([start, i + 1])
       start = i + 1
+    } else if ((ch === '.' || ch === '!' || ch === '?') && /\s/.test(text[i + 1] ?? '')) {
+      let j = i + 1
+      while (j < text.length && /\s/.test(text[j])) j++
+      ranges.push([start, j])
+      start = j
+      i = j - 1
     }
   }
   if (start < text.length) ranges.push([start, text.length])
