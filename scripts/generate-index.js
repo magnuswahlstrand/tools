@@ -9,9 +9,11 @@ function getGitInfo(projectPath) {
         const commitCount = execSync(`git rev-list --count HEAD -- ${projectPath}`, { encoding: 'utf8' }).trim();
         const lastUpdateRaw = execSync(`git log -1 --format=%at -- ${projectPath}`, { encoding: 'utf8' }).trim();
         const lastUpdate = execSync(`git log -1 --format=%cd --date=format:'%B %d, %Y' -- ${projectPath}`, { encoding: 'utf8' }).trim();
-        return { commitCount, lastUpdate, lastUpdateRaw: parseInt(lastUpdateRaw, 10) || 0 };
+        const firstAddedRaw = execSync(`git log --reverse --format=%at -- ${projectPath}`, { encoding: 'utf8' }).trim().split('\n')[0];
+        const firstAdded = execSync(`git log --reverse --format=%cd --date=format:'%B %d, %Y' -- ${projectPath}`, { encoding: 'utf8' }).trim().split('\n')[0];
+        return { commitCount, lastUpdate, lastUpdateRaw: parseInt(lastUpdateRaw, 10) || 0, firstAdded, firstAddedRaw: parseInt(firstAddedRaw, 10) || 0 };
     } catch (e) {
-        return { commitCount: '0', lastUpdate: 'N/A', lastUpdateRaw: 0 };
+        return { commitCount: '0', lastUpdate: 'N/A', lastUpdateRaw: 0, firstAdded: 'N/A', firstAddedRaw: 0 };
     }
 }
 
@@ -47,8 +49,8 @@ const projectsInfo = projects.map(project => {
     };
 });
 
-// Sort by last update, most recent first
-projectsInfo.sort((a, b) => b.lastUpdateRaw - a.lastUpdateRaw);
+// Sort by first added, oldest first
+projectsInfo.sort((a, b) => a.firstAddedRaw - b.firstAddedRaw);
 
 // Generate HTML content
 const html = `<!DOCTYPE html>
@@ -150,7 +152,7 @@ const html = `<!DOCTYPE html>
             </div>` : ''}
             <div class="project-meta">
                 Version: ${project.commitCount} commits<br>
-                Last update: ${project.lastUpdate}
+                Added: ${project.firstAdded}
             </div>
         </a>
         `).join('')}
