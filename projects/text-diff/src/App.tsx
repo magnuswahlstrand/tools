@@ -82,15 +82,33 @@ export default function App() {
       </div>
       {hasDiff ? (
         <pre className="diff-output">
-          {contextParts.map((part, idx) =>
-            part.type === 'same' ? (
-              <span key={idx}>{part.value}</span>
+          {contextParts.map((part, idx) => {
+            const isChange = part.type === 'added' || part.type === 'removed'
+            const prev = idx > 0 ? contextParts[idx - 1] : null
+            const prevIsChange =
+              prev != null && (prev.type === 'added' || prev.type === 'removed')
+            const needsSpace =
+              isChange && prevIsChange && !/\s$/.test(prev.value) && !/^\s/.test(part.value)
+            const key = `part-${idx}`
+            return needsSpace ? (
+              <span key={key}>
+                <span className="word-gap"> </span>
+                {part.type === 'same' ? (
+                  part.value
+                ) : (
+                  <span className={part.type}>
+                    {part.type === 'gap' ? '…' : part.value}
+                  </span>
+                )}
+              </span>
+            ) : part.type === 'same' ? (
+              <span key={key}>{part.value}</span>
             ) : (
-              <span key={idx} className={part.type}>
+              <span key={key} className={part.type}>
                 {part.type === 'gap' ? '…' : part.value}
               </span>
-            ),
-          )}
+            )
+          })}
         </pre>
       ) : (
         <p className="no-diff">No differences</p>
