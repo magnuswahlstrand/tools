@@ -87,7 +87,7 @@ export default function App() {
               <span key={idx}>{part.value}</span>
             ) : (
               <span key={idx} className={part.type}>
-                {part.type === 'gap' ? '…' : part.value}
+                {part.value}
               </span>
             ),
           )}

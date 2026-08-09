@@ -138,11 +138,12 @@ export function collapseUnchanged(parts: DiffPart[], context = 1): DiffPart[] {
     }
   }
 
-  // Render only the hunks, clipping parts and inserting "…" gaps between.
+  // Render only the hunks, clipping parts and inserting "…" gaps. A gap is
+  // inserted when content before, between or after the hunks is collapsed.
   const out: DiffPart[] = []
   for (let h = 0; h < hunks.length; h++) {
     const [hs, he] = hunks[h]
-    if (h > 0) out.push({ type: 'gap', value: '…' })
+    if (h > 0 || hs > 0) out.push({ type: 'gap', value: '\n…\n' })
     let pPos = 0
     for (const p of parts) {
       const pStart = pPos
@@ -158,5 +159,7 @@ export function collapseUnchanged(parts: DiffPart[], context = 1): DiffPart[] {
       }
     }
   }
+  const lastHunk = hunks[hunks.length - 1]
+  if (lastHunk && lastHunk[1] < text.length) out.push({ type: 'gap', value: '\n…\n' })
   return out
 }
