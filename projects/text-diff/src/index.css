@@ -117,6 +117,15 @@ h1 {
   user-select: none;
 }
 
+.no-diff {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #d1d9e0;
+  border-radius: 6px;
+  color: #59636e;
+}
+
 .diff-output .added {
   background: #dafbe1;
   color: #1a7f37;
