@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { ChangeEvent } from 'react'
-import { diffWords, type DiffType } from './diff'
+import { collapseUnchanged, diffWords, type DiffType } from './diff'
 
 const SAMPLE_OLD = `The quick brown fox jumps over the lazy dog.
 It was a sunny day in the forest.`
@@ -11,8 +11,10 @@ It was a rainy day in the deep forest.`
 export default function App() {
   const [oldText, setOldText] = useState<string>(SAMPLE_OLD)
   const [newText, setNewText] = useState<string>(SAMPLE_NEW)
+  const [context, setContext] = useState<number>(1)
 
   const parts = useMemo(() => diffWords(oldText, newText), [oldText, newText])
+  const contextParts = useMemo(() => collapseUnchanged(parts, context), [parts, context])
   const stats = useMemo(() => {
     const count = (type: DiffType) =>
       parts
@@ -45,18 +47,31 @@ export default function App() {
       </div>
       <div className="result-header">
         <h2>Diff</h2>
-        <span className="stats">
-          <span className="stat-added">+{stats.added}</span>{' '}
-          <span className="stat-removed">−{stats.removed}</span> words
+        <span className="controls">
+          <label htmlFor="context">Context sentences</label>
+          <input
+            id="context"
+            type="number"
+            min={0}
+            max={10}
+            value={context}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setContext(Math.max(0, Math.min(10, Number(e.target.value) || 0)))
+            }
+          />
+          <span className="stats">
+            <span className="stat-added">+{stats.added}</span>{' '}
+            <span className="stat-removed">−{stats.removed}</span> words
+          </span>
         </span>
       </div>
       <pre className="diff-output">
-        {parts.map((part, idx) =>
+        {contextParts.map((part, idx) =>
           part.type === 'same' ? (
             <span key={idx}>{part.value}</span>
           ) : (
             <span key={idx} className={part.type}>
-              {part.value}
+              {part.type === 'gap' ? '…' : part.value}
             </span>
           ),
         )}
