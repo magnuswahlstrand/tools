@@ -1,0 +1,105 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f6f8fa;
+  color: #1f2328;
+}
+
+.app {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.5rem;
+}
+
+.hint {
+  margin: 0 0 1.5rem;
+  color: #59636e;
+}
+
+.inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.inputs label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.inputs textarea {
+  min-height: 180px;
+  padding: 0.75rem;
+  font: 0.9rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  border: 1px solid #d1d9e0;
+  border-radius: 6px;
+  resize: vertical;
+  background: #fff;
+}
+
+.inputs textarea:focus {
+  outline: 2px solid #0969da;
+  outline-offset: -1px;
+}
+
+.result-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.result-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.stats {
+  font: 0.85rem ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.stat-added {
+  color: #1a7f37;
+  font-weight: 600;
+}
+
+.stat-removed {
+  color: #d1242f;
+  font-weight: 600;
+}
+
+.diff-output {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #d1d9e0;
+  border-radius: 6px;
+  font: 0.9rem/1.7 ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.diff-output .added {
+  background: #dafbe1;
+  color: #1a7f37;
+  border-radius: 3px;
+}
+
+.diff-output .removed {
+  background: #ffebe9;
+  color: #d1242f;
+  text-decoration: line-through;
+  border-radius: 3px;
+}

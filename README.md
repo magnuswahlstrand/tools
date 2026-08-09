@@ -5,8 +5,10 @@ A monorepo containing various tools and small projects, deployed to [wahlstrand.
 ## Projects
 
 * **[Oskar's Typing Game](projects/oskar-typing-game)** - A typing game for kids that helps them learn letters and words with Swedish pronunciation
+* **[Bulk QR Code Generator](projects/bulk-qr)** - Generate multiple QR codes at once, with customizable colors and bulk downloads
+* **[Maze Generator](projects/maze-generator)** - Generate mazes with configurable options
+* **[Text Diff](projects/text-diff)** - Word-for-word diff between two texts, like `git diff --word-diff`
 
 ## Ideas
 
-* **Bulk QR Code Generator** - Based on each line in a text area, generate QR code images that can be copied
 * **Children Book Generator** - Generate a choose your own adventure story based on input and key words
