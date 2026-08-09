@@ -26,7 +26,8 @@ const DEFAULT_CONFIG: ConfigValues = {
   word: 'cat, dog',
   rows: 8,
   cols: 8,
-  showLetters: true,
+  copies: 1,
+  useWords: true,
   showDecoys: true,
   decoyChars: '',
   drawingArea: false,
@@ -54,7 +55,27 @@ function App() {
   useEffect(() => {
     setError('');
 
+    const count = configValues.copies;
     const words = configValues.word.split(',').map((w) => w.trim()).filter(Boolean);
+
+    if (!configValues.useWords) {
+      const mazes: MazeData[] = [];
+      for (let c = 0; c < count; c++) {
+        const { grid, startCorner, finishCorner } = generateMaze(
+          configValues.rows, configValues.cols,
+        );
+        const entrance = getCornerCell(configValues.rows, configValues.cols, startCorner);
+        const exit = getCornerCell(configValues.rows, configValues.cols, finishCorner);
+        const solutionPath = solveMaze(grid, entrance.row, entrance.col, exit.row, exit.col);
+        mazes.push({
+          word: '', grid, solutionPath, letterPlacements: [],
+          startCorner, finishCorner,
+        });
+      }
+      setMazeData(mazes);
+      return;
+    }
+
     if (words.length === 0) {
       setMazeData([]);
       return;
@@ -63,21 +84,21 @@ function App() {
     const mazes: MazeData[] = [];
 
     for (const word of words) {
-      const { grid, startCorner, finishCorner } = generateMaze(
-        configValues.rows, configValues.cols,
-      );
+      for (let c = 0; c < count; c++) {
+        const { grid, startCorner, finishCorner } = generateMaze(
+          configValues.rows, configValues.cols,
+        );
 
-      const entrance = getCornerCell(configValues.rows, configValues.cols, startCorner);
-      const exit = getCornerCell(configValues.rows, configValues.cols, finishCorner);
-      const solutionPath = solveMaze(grid, entrance.row, entrance.col, exit.row, exit.col);
-      const letterPlacements = configValues.showLetters
-        ? placeLetters(grid, solutionPath, word, configValues.showDecoys, configValues.decoyChars)
-        : [];
+        const entrance = getCornerCell(configValues.rows, configValues.cols, startCorner);
+        const exit = getCornerCell(configValues.rows, configValues.cols, finishCorner);
+        const solutionPath = solveMaze(grid, entrance.row, entrance.col, exit.row, exit.col);
+        const letterPlacements = placeLetters(grid, solutionPath, word, configValues.showDecoys, configValues.decoyChars);
 
-      mazes.push({
-        word, grid, solutionPath, letterPlacements,
-        startCorner, finishCorner,
-      });
+        mazes.push({
+          word, grid, solutionPath, letterPlacements,
+          startCorner, finishCorner,
+        });
+      }
     }
 
     setMazeData(mazes);

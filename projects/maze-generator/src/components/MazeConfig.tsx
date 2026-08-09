@@ -4,7 +4,8 @@ export interface ConfigValues {
   word: string;
   rows: number;
   cols: number;
-  showLetters: boolean;
+  copies: number;
+  useWords: boolean;
   showDecoys: boolean;
   decoyChars: string;
   drawingArea: boolean;
@@ -24,16 +25,6 @@ export function MazeConfig({ values, onChange }: MazeConfigProps) {
   return (
     <div className="config-panel">
       <h2>Settings</h2>
-
-      <label>
-        Word
-        <input
-          type="text"
-          value={values.word}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => update('word', e.target.value)}
-          placeholder="cat, dog, fish"
-        />
-      </label>
 
       <div className="config-row">
         <label>
@@ -61,10 +52,31 @@ export function MazeConfig({ values, onChange }: MazeConfigProps) {
       <label className="checkbox-row">
         <input
           type="checkbox"
-          checked={values.showLetters}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => update('showLetters', e.target.checked)}
+          checked={values.useWords}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => update('useWords', e.target.checked)}
         />
-        Show letters
+        Use words
+      </label>
+      {values.useWords && (
+        <label>
+          Word
+          <input
+            type="text"
+            value={values.word}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => update('word', e.target.value)}
+            placeholder="cat, dog, fish"
+          />
+        </label>
+      )}
+      <label>
+        Copies
+        <input
+          type="number"
+          min={1}
+          max={20}
+          value={values.copies}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => update('copies', Math.max(1, parseInt(e.target.value) || 1))}
+        />
       </label>
       <label className="checkbox-row">
         <input
