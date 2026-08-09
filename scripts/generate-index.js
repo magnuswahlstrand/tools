@@ -49,8 +49,8 @@ const projectsInfo = projects.map(project => {
     };
 });
 
-// Sort by first added, oldest first
-projectsInfo.sort((a, b) => a.firstAddedRaw - b.firstAddedRaw);
+// Sort by first added, newest first
+projectsInfo.sort((a, b) => b.firstAddedRaw - a.firstAddedRaw);
 
 // Generate HTML content
 const html = `<!DOCTYPE html>
