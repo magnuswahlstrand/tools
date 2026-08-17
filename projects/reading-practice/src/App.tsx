@@ -1,14 +1,17 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import './App.css'
 
 const IMAGES = Array.from({ length: 12 }, (_, i) => ({
-    src: `${import.meta.env.BASE_URL}images/gen_${i + 1}.jpg`,
+  src: `${import.meta.env.BASE_URL}images/gen_${i + 1}.jpg`,
   label: `gen_${i + 1}`,
 }))
+
+const SWIPE_THRESHOLD = 50
 
 function App() {
   const [index, setIndex] = useState(0)
   const [fullscreen, setFullscreen] = useState(false)
+  const touchStartX = useRef<number | null>(null)
 
   const goTo = useCallback((next: number) => {
     setIndex(((next % IMAGES.length) + IMAGES.length) % IMAGES.length)
@@ -24,6 +27,20 @@ function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [index, goTo])
 
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return
+    const delta = e.changedTouches[0].clientX - touchStartX.current
+    touchStartX.current = null
+    if (Math.abs(delta) > SWIPE_THRESHOLD) {
+      if (delta < 0) goTo(index + 1)
+      else goTo(index - 1)
+    }
+  }
+
   const current = IMAGES[index]
 
   return (
@@ -35,7 +52,11 @@ function App() {
         </span>
       </header>
 
-      <div className="viewport">
+      <div
+        className="viewport"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
         <button className="arrow arrow-prev" onClick={() => goTo(index - 1)} aria-label="Previous image">
           ‹
         </button>
