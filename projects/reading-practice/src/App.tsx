@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import './App.css'
 
-const IMAGES = Array.from({ length: 12 }, (_, i) => ({
+const IMAGES = Array.from({ length: 21 }, (_, i) => ({
   src: `${import.meta.env.BASE_URL}images/gen_${i + 1}.jpg`,
   label: `gen_${i + 1}`,
 }))
